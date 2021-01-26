@@ -1,0 +1,83 @@
+---
+title: "Assignment 2"
+output: html_notebook
+---
+
+This is my Assignment 2 for BIOL 432. 
+
+First, I will load in my dataset which estimates fish biomass and abundance using environmental DNA (eDNA) levels. There is also data for water temperature, fish abundance and biomass, number of sampled aquariums and filter type.  
+
+Full citation:  
+
+Lacoursière-Roussel, Anaïs; Rosabal, Maikel; Bernatchez, Louis (2016), Estimating fish abundance and biomass from eDNA concentrations: variability among capture methods and environmental conditions, Molecular Ecology Resources, Article-journal, https://doi.org/10.1111/1755-0998.12522  
+
+```{r}
+library(ggplot2)
+library(gridExtra)
+library(dplyr)
+```
+
+```{r}
+dat <- read.csv("eDNA_biomass.csv")
+str(dat)
+```
+
+There were only two water temperatures used: 7 and 14 (units unspecified). For the purposes of this assignment, I will be treating this as a discrete variable.
+
+```{r}
+dat$water_temp = as.factor(dat$water_temp)
+```
+
+
+## 1. A frequency distribution of a single continuous variable
+
+```{r}
+qplot(x = fish_biomass_mgL, data = dat)
+```
+
+## 2. A bivariate plot of two continuous variables
+
+```{r}
+qplot(x = fish_biomass_mgL, y = eDNA_ngL, data = dat)
+```
+
+## 3. A boxplot of a continuous variable measured in 2 or more groups
+
+```{r}
+ggplot(dat, aes(x = water_temp, y = fish_biomass_mgL)) +
+  geom_boxplot()
+```
+
+## 4. A bivariate plot of two continuous variables, colour-coded for 2 or more groups and scaled in size based on a third continous variable
+
+```{r}
+ggplot(dat, aes(x = fish_biomass_mgL, y = fish_abundance, 
+                colour = water_temp, size = eDNA_ngL)) +
+  geom_point()
+```
+
+## 5. One graph of your choice, of any type, using any data. Create this using ggplot() with parameters to make the graph look as clean (no unnecessary lines or shading) . Try to reproduce a clean but eye-catching figure that you might see in a journal like Nature or Science.  
+
+```{r}
+ggplot(dat, aes(x = fish_biomass_mgL, y = eDNA_ngL, colour = filter)) +
+  geom_jitter(alpha = 0.5) +
+  geom_smooth(method = "lm", size = 0.3, alpha = 0.5, se = F) +
+  scale_x_continuous(name = "Fish Biomass (mg/L)") +
+  scale_y_continuous(name = "eDNA (ng/L)") +
+  scale_colour_discrete(name = "Filter Type") +
+  ggtitle("Comparison of filter types in predicting fish biomass using eDNA levels") +
+  theme_linedraw()
+```
+
+*Fig 1.* This is a graph that could be used to illustrate a question asking whether filter type influences the accuracy of fish biomass prediction using eDNA levels. 
+
+
+
+
+
+
+
+
+
+
+
